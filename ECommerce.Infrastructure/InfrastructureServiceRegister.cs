@@ -1,6 +1,7 @@
 ﻿using ECommerce.Domain.Contracts;
 using ECommerce.Infrastructure.Data;
 using ECommerce.Infrastructure.Data.DataSeeding;
+using ECommerce.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +26,8 @@ namespace ECommerce.Infrastructure
 
 
             services.AddKeyedScoped<IDataSeeder, CatalogDataSeed>("Catalog");
+            services.AddScoped<IUnitOfWork,UnitOfWork>();
+
             return services;
         }
          

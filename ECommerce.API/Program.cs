@@ -1,4 +1,5 @@
 
+using ECommerce.Application;
 using ECommerce.Infrastructure;
 
 namespace ECommerce.API
@@ -13,7 +14,7 @@ namespace ECommerce.API
 
             builder.Services.AddControllers(); //project API
             builder.Services.AddInfrastructureServices(builder.Configuration);
-
+            builder.Services.AddApplicationServices();
 
 
 
