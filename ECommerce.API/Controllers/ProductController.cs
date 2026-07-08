@@ -6,9 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProductController : ControllerBase
+    public class ProductController :ApiBaseController
     {
         private readonly IProductService _productService;
         public ProductController(IProductService productService)
@@ -17,30 +15,30 @@ namespace ECommerce.API.Controllers
             
         }
         [HttpGet]
-        public async Task<ActionResult<Result<IReadOnlyList<ProductDto>>>>GetAllProducts(CancellationToken ct)
+        public async Task<ActionResult<IReadOnlyList<ProductDto>>>GetAllProducts(CancellationToken ct)
         {
             var result = await _productService.GetAllProductAsync(ct);
-            return Ok(result);
+            return ToActionResult(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Result<ProductDto>>> GetProduct(int id, CancellationToken ct)
+        public async Task<ActionResult<ProductDto>> GetProduct(int id, CancellationToken ct)
         {
             var result = await _productService.GetProductByIdAsync(id, ct); 
-            return Ok(result);
+            return ToActionResult(result);
         }
 
         [HttpGet("brands")]
-        public async Task<ActionResult<Result<IReadOnlyList<BrandDto>>>> GetAllBrands(CancellationToken ct)
+        public async Task<ActionResult<IReadOnlyList<BrandDto>>> GetAllBrands(CancellationToken ct)
         {
             var brands = await _productService.GetAllBrandAsync(ct);
-            return Ok(brands);
+            return ToActionResult(brands);
         }
         [HttpGet("types")]
-        public async Task<ActionResult<Result<IReadOnlyList<TypeDto>>>> GetAllTypes(CancellationToken ct)
+        public async Task<ActionResult<IReadOnlyList<TypeDto>>> GetAllTypes(CancellationToken ct)
         {
             var types = await _productService.GetAllTypesAsync(ct);
-            return Ok(types);
+            return ToActionResult(types);
         }
     }
 }
