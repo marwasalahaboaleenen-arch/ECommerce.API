@@ -28,19 +28,26 @@ namespace ECommerce.Application.Services
             return Result<IReadOnlyList<BrandDto>>.Ok(data);
         }
 
-        public Task<Result<IReadOnlyList<ProductDto>>> GetAllProductAsync(CancellationToken ct = default)
+        public async Task<Result<IReadOnlyList<ProductDto>>> GetAllProductAsync(CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            var products = await _unitOfWork.GetRepository<Product, int>().GetAllAsync(ct);
+            return Result<IReadOnlyList<ProductDto>>.Ok(_mapper.Map<IReadOnlyList<ProductDto>>(products));
         }
 
-        public Task<Result<IReadOnlyList<TypeDto>>> GetAllTypesAsync(CancellationToken ct = default)
+        public async Task<Result<IReadOnlyList<TypeDto>>> GetAllTypesAsync(CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            var types = _mapper.Map<IReadOnlyList<TypeDto>>(await _unitOfWork.GetRepository<ProductType, int>().GetAllAsync(ct));
+            return Result<IReadOnlyList<TypeDto>>.Ok(types);
         }
 
-        public Task<Result<IReadOnlyList<ProductDto>>> GetProductByIdAsync(int id, CancellationToken ct = default)
+        public async Task<Result<ProductDto>> GetProductByIdAsync(int id, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+          var product = await _unitOfWork.GetRepository<Product,int>().GetByIdAsync(id, ct);
+            if (product == null)
+                return Result<ProductDto>.Fail(Error.NotFound("Product.NotFound", $"Product With Id {id}Not Found"));
+            return Result<ProductDto>.Ok(_mapper.Map<ProductDto>(product));
         }
+
+      
     }
 }
