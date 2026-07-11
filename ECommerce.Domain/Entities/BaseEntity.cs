@@ -11,6 +11,8 @@ namespace ECommerce.Domain.Entities
 {
     public abstract class BaseEntity<TKey>
     {
+        public IQueryable<object> query;
+
         public TKey  Id { get; set; }
     }
 }
