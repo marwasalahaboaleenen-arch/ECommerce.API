@@ -1,6 +1,7 @@
 ﻿using ECommerce.Domain.Contracts;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Entities.Products;
+using ECommerce.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,9 +12,9 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace ECommerce.Infrastructure.Data.DataSeeding
+namespace ECommerce.Infrastructure.SeedingData
 {
-    public class CatalogDataSeed(StoreDbContext dbContext,ILogger logger) : IDataSeeder
+    public class CatalogDataSeeder(StoreDbContext dbContext,ILogger logger) : IDataSeeder
     {
  	        
 		   public async Task SeedDataAsync(CancellationToken ct = default)
