@@ -6,10 +6,13 @@ using ECommerce.Infrastructure.Identity.Entities;
 using ECommerce.Infrastructure.Identity.Services;
 using ECommerce.Infrastructure.Repositories;
 using ECommerce.Infrastructure.SeedingData;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Experimental;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -23,17 +26,15 @@ namespace ECommerce.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+
             services.AddDbContext<StoreDbContext>(options =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            });
 
-
-                });
-            services.AddDbContext<StoreDbContext>(options =>
+            services.AddDbContext<StoreIdentityDbContext>(options =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("IdentityConnection"));
-
-
             });
 
 
@@ -55,7 +56,32 @@ namespace ECommerce.Infrastructure
                 .AddEntityFrameworkStores<StoreIdentityDbContext>();
 
 
+            var jwtSetting = configuration.GetSection("JWT").Get<JwtSettings>()
+                ?? throw new InvalidOperationException("Jwt Setting Empty!");    
+
             services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<ITokenService, TokenService>();
+
+            services.AddAuthentication(opt=>
+            {
+                opt.DefaultAuthenticateScheme=JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme=JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(opt=>
+            {
+                opt.SaveToken=true;
+                opt.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = jwtSetting.Issuer,
+                    ValidateAudience = true,
+                    ValidAudience = jwtSetting.Audience,
+                    ValidateLifetime = true,
+                    RequireExpirationTime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.SecretKey)),
+                    ClockSkew = TimeSpan.FromSeconds(5)
+                };
+            });
 
             return services;
         }

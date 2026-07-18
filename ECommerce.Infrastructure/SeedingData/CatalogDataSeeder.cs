@@ -1,5 +1,6 @@
 ﻿using ECommerce.Domain.Contracts;
 using ECommerce.Domain.Entities;
+using ECommerce.Domain.Entities.Orders;
 using ECommerce.Domain.Entities.Products;
 using ECommerce.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,9 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Infrastructure.SeedingData
 {
-    public class CatalogDataSeeder(StoreDbContext dbContext,ILogger logger) : IDataSeeder
+    public class CatalogDataSeeder(
+    StoreDbContext dbContext,
+    ILogger<CatalogDataSeeder> logger) : IDataSeeder
     {
  	        
 		   public async Task SeedDataAsync(CancellationToken ct = default)
@@ -32,6 +35,8 @@ namespace ECommerce.Infrastructure.SeedingData
                 await SeedDataIfEmptyAsync<ProductBrand, int>(rootPath, "brands.json", ct);
                 await SeedDataIfEmptyAsync<ProductType, int>(rootPath, "types.json", ct);
                 await SeedDataIfEmptyAsync<Product, int>(rootPath, "products.json", ct);
+                await SeedDataIfEmptyAsync<DeliveryMethod, int>(rootPath, "delivery.json", ct);
+
                 var result = await dbContext.SaveChangesAsync(ct);
                 if (result > 0)
                 {

@@ -1,6 +1,8 @@
 
 using ECommerce.Application;
+using ECommerce.Application.Profiles;
 using ECommerce.Infrastructure;
+using ECommerce.Infrastructure.Identity.Services;
 using System.Threading.Tasks;
 
 namespace ECommerce.API
@@ -17,6 +19,8 @@ namespace ECommerce.API
             builder.Services.AddInfrastructureServices(builder.Configuration);
             builder.Services.AddApplicationServices();
 
+            builder.Services.Configure<UrlSettings>(builder.Configuration.GetSection("UrlSettings"));
+            builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JWT"));
 
 
 
